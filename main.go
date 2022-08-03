@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 var (
@@ -42,12 +42,11 @@ func scaffold() {
 
 func npmInit() {
 	npm := exec.Command("npm", "init", "-y")
-	out, err := npm.Output()
+	_, err := npm.Output()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println(string(out))
 }
 
 func npmInstall(libs ...string) {
@@ -59,17 +58,12 @@ func npmInstall(libs ...string) {
 	flagSplit := strings.Split(flags, " ")
 	flagSplit = append(flagSplit, libs...)
 
-	for _, fs := range flagSplit {
-		fmt.Println(fs)
-	}
-
 	npm := exec.Command("npm", flagSplit...)
-	out, err := npm.Output()
+	_, err := npm.Output()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println(string(out))
 }
 
 func npmInstallDev(libs ...string) {
@@ -81,45 +75,72 @@ func npmInstallDev(libs ...string) {
 	flagSplit := strings.Split(flags, " ")
 	flagSplit = append(flagSplit, libs...)
 
-	for _, fs := range flagSplit {
-		fmt.Println(fs)
-	}
-
 	npm := exec.Command("npm", flagSplit...)
-	out, err := npm.Output()
+	_, err := npm.Output()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println(string(out))
 }
 
 func tailwindInit() {
 	npx := exec.Command("npx", "tailwindcss", "init")
-	out, err := npx.Output()
+	_, err := npx.Output()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println(string(out))
 }
 
 func tsInit() {
 	tsc := exec.Command("tsc", "--init")
-	out, err := tsc.Output()
+	_, err := tsc.Output()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println(string(out))
+}
+
+func do() {
+	start := time.Now()
+
+	log.Println("creating directory structure")
+	scaffold()
+
+	log.Println("initializing npm")
+	npmInit()
+
+	log.Println("installing npm packages")
+	npmInstall("react", "react-dom", "esbuild")
+
+	log.Println("installing npm dev dependencies")
+	npmInstallDev("tailwindcss@latest", "@iconify/react", "typescript")
+
+	log.Println("initializing tailwindcss")
+	tailwindInit()
+
+	log.Println("initializing typescript")
+	tsInit()
+
+	log.Println("creating necessary files")
+	doCreation()
+	since := time.Since(start)
+
+	log.Printf("done. %.2f seconds\n", since.Seconds())
 }
 
 func main() {
-	scaffold()
-	npmInit()
-	npmInstall("react", "react-dom", "esbuild")
-	npmInstallDev("tailwindcss@latest", "@iconify/react", "typescript")
-	tailwindInit()
-	tsInit()
+	args := os.Args[1:]
 
+	switch args[0] {
+	case "scaffold":
+		do()
+	case "serve":
+		serve()
+	case "both":
+		do()
+		serve()
+	default:
+		log.Println("unsupported argument")
+	}
 }
