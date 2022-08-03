@@ -13,7 +13,6 @@ A simple CLI tool to get a simple React app started. No need for CRA.
 .
 ├── dist
 ├── index.html
-├── migo.exe
 ├── package-lock.json
 ├── package.json
 ├── scripts
