@@ -1,3 +1,6 @@
 ./tests/
 *.exe
 node_modules
+bin
+scripts
+.idea
