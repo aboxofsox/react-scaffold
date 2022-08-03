@@ -29,4 +29,4 @@ A simple CLI tool to get a simple React app started. No need for CRA.
 ```
 
 ### Installation
-Download the binary for your system from the releases page, or `go install github.com/aboxofsox/react-scaffold`. 
+Download the binary for your system. How you install it is up to you.
